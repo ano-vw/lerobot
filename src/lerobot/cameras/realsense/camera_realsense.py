@@ -126,6 +126,7 @@ class RealSenseCamera(Camera):
         self.color_mode = config.color_mode
         self.use_depth = config.use_depth
         self.warmup_s = config.warmup_s
+        self.exposure = config.exposure
 
         self.rs_pipeline: rs.pipeline | None = None
         self.rs_profile: rs.pipeline_profile | None = None
@@ -173,6 +174,14 @@ class RealSenseCamera(Camera):
 
         try:
             self.rs_profile = self.rs_pipeline.start(rs_config)
+            sensor = self.rs_profile.get_device().first_depth_sensor()
+            try:
+                if sensor:
+                    sensor.set_option(rs.option.exposure, self.exposure)
+                    logger.info(f"Set exposure to {self.exposure}µs for {self}")
+            except Exception as e:
+                logger.warning(f"Failed to set exposure for {self}: {e}")
+
         except RuntimeError as e:
             self.rs_profile = None
             self.rs_pipeline = None

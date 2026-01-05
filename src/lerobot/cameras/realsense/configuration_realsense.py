@@ -58,6 +58,7 @@ class RealSenseCameraConfig(CameraConfig):
     use_depth: bool = False
     rotation: Cv2Rotation = Cv2Rotation.NO_ROTATION
     warmup_s: int = 1
+    exposure: int = 6500  # Exposure time in microseconds
 
     def __post_init__(self) -> None:
         self.color_mode = ColorMode(self.color_mode)
